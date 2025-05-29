@@ -1,8 +1,8 @@
 import { createApp } from 'vue'
 import App from '@/App.vue'
 import router from '@/router/index'
-import store from '@/store/index'
-import '@/components/popoutMessageBox'
+import { createPinia } from 'pinia'
+import PopoutMessagePlugin from '@/plugins/PopoutMessagePlugin' // Added
 
 import 'bootstrap/dist/css/bootstrap.min.css'
 import '@fortawesome/fontawesome-free/css/all.min.css'
@@ -14,4 +14,4 @@ import '@/index.css'
 // import field from './test.json'
 // console.log(field)
 
-createApp(App).use(store).use(router).mount('#app')
+createApp(App).use(createPinia()).use(router).use(PopoutMessagePlugin).mount('#app')

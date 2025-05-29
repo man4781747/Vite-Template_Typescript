@@ -1,8 +1,8 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import postcssNesting from 'postcss-nesting';
+import postcssNesting from 'postcss-nesting'
 import path from 'path'
-var MainHtmlPath = "index.html"
+var MainHtmlPath = 'index.html'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -11,16 +11,16 @@ export default defineConfig({
     rollupOptions: {
       input: {
         // a: "./" + MainHtmlPath,
-        indexPath: "index.html",
+        indexPath: 'index.html',
       },
-      
+
       output: {
         assetFileNames: (assetInfo) => {
-          let extType = assetInfo.name.split('.').at(1);
+          let extType = assetInfo.name.split('.').at(1)
           if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(extType)) {
-            extType = 'img';
+            extType = 'img'
           }
-          return `static/[name]/${extType}/[name]-[hash][extname]`;
+          return `static/[name]/${extType}/[name]-[hash][extname]`
         },
         chunkFileNames: 'static/[name]/js/[name]-[hash].js',
         entryFileNames: 'static/[name]/js/[name]-[hash].js',
@@ -29,9 +29,7 @@ export default defineConfig({
   },
   css: {
     postcss: {
-      plugins: [
-        postcssNesting
-      ],
+      plugins: [postcssNesting],
     },
   },
   resolve: {
@@ -43,4 +41,19 @@ export default defineConfig({
   // server: {
   //   open: MainHtmlPath
   // }
+  test: {
+    // Vitest configuration
+    globals: true, // Use global APIs
+    environment: 'jsdom', // Use jsdom for DOM environment
+    deps: {
+      inline: ['@vue', '@vueuse', 'vitest-canvas-mock'], // Ensure Vue components are processed correctly
+    },
+    environmentOptions: {
+      // Options for jsdom
+      jsdom: {
+        resources: 'usable',
+      },
+    },
+    // setupFiles: ['./vitest.setup.ts'], // Optional: if setup files are needed
+  },
 })

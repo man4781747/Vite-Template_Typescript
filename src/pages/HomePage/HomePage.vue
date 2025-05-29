@@ -1,18 +1,30 @@
 <script setup lang="ts">
-  import { useStore } from 'vuex'
-  import type { State } from '@/store'
-  const store = useStore<State>()
-  import { useCounter } from './HomePage'
-  const { count, add, logMsg } = useCounter()
+import { useCounterStore } from '@/stores/counter'
+import { useCounter } from './HomePage'
+import { usePopoutNotify } from '@/plugins/PopoutMessagePlugin'
 
+const counterStore = useCounterStore()
+const { count, add, logMsg } = useCounter()
+const $notify = usePopoutNotify()
 
-
-  function successMsg() {window.successLog(logMsg.value, 'Success訊息', 10)}
-  function errorMsg() {window.errorLog(logMsg.value, 'Error訊息', 10)}
-  function infoMsg() {window.infoLog(logMsg.value, 'Info訊息', 10)}
-  function warningMsg() {window.warningLog(logMsg.value, 'Waring訊息', 10)}
-  function degubMsg() {window.debugLog(logMsg.value, 'Debug訊息', 10)}
-  function primaryMsg() {window.primaryLog(logMsg.value, 'Primary訊息', 10)}
+function successMsg() {
+  $notify.success(logMsg.value, 'Success訊息', 10)
+}
+function errorMsg() {
+  $notify.error(logMsg.value, 'Error訊息', 10)
+}
+function infoMsg() {
+  $notify.info(logMsg.value, 'Info訊息', 10)
+}
+function warningMsg() {
+  $notify.warning(logMsg.value, 'Waring訊息', 10)
+}
+function degubMsg() {
+  $notify.debug(logMsg.value, 'Debug訊息', 10)
+}
+function primaryMsg() {
+  $notify.primary(logMsg.value, 'Primary訊息', 10)
+}
 </script>
 
 <template>
@@ -20,7 +32,7 @@
     <div class="row">
       <div class="col">
         <div class="input-group mb-3">
-          <input type="number" class="form-control" v-model="store.state.count">
+          <input v-model="counterStore.count" type="number" class="form-control" />
           <button class="btn btn-primary" type="button" @click="add">+1</button>
         </div>
       </div>
@@ -28,7 +40,7 @@
     <div class="row">
       <div class="col">
         <div class="input-group mb-3">
-          <input type="text" class="form-control" v-model="logMsg">
+          <input v-model="logMsg" type="text" class="form-control" />
           <button class="btn btn-success" @click="successMsg">Success訊息</button>
           <button class="btn btn-danger" @click="errorMsg">Error/Fail訊息</button>
           <button class="btn btn-info" @click="infoMsg">Info訊息</button>

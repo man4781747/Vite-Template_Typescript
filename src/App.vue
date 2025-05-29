@@ -16,9 +16,8 @@
 
 <template>
   <div class="container-fluid">
-    <router-view/>
+    <router-view />
   </div>
 </template>
 
-<script lang="ts">
-</script>
+<script lang="ts"></script>

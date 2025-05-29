@@ -105,4 +105,3 @@ export class WebSocketClient {
     this.onErrorCallback = callback
   }
 }
-
