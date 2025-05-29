@@ -4,18 +4,25 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "type-check": "vue-tsc --noEmit",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
+    "uuid": "^11.1.0",
     "vue": "^3.4.31",
     "vue-router": "^4.4.0",
     "vuex": "^4.1.0"
   },
   "devDependencies": {
+    "@types/node": "^22.15.24",
+    "@types/uuid": "^10.0.0",
     "@vitejs/plugin-vue": "^5.0.5",
+    "@vue/tsconfig": "^0.7.0",
     "postcss-nesting": "^13.0.1",
-    "vite": "^5.4.10"
+    "typescript": "^5.8.3",
+    "vite": "^5.4.10",
+    "vue-tsc": "^2.2.10"
   }
 }
