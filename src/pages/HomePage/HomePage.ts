@@ -1,4 +1,4 @@
-import { computed } from 'vue'
+import { computed, ref, type Ref } from 'vue'
 import { useStore } from 'vuex'
 import type { State } from '@/store'
 
@@ -11,8 +11,10 @@ export function useCounter() {
     store.commit('increment')
   }
 
+  const logMsg = ref("")
   return {
     count,
     add,
+    logMsg,
   }
 }
