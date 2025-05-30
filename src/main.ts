@@ -13,5 +13,5 @@ import '@/index.css'
 // 這樣做可以import json格式檔案
 // import field from './test.json'
 // console.log(field)
-
-createApp(App).use(createPinia()).use(router).use(PopoutMessagePlugin).mount('#app')
+const pinia = createPinia()
+createApp(App).use(pinia).use(router).use(PopoutMessagePlugin,{pinia}).mount('#app')

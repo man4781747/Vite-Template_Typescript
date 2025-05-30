@@ -1,12 +1,11 @@
 // 匯入 createApp 與 h 函數：
 // - createApp: 用來動態建立一個新的 Vue 應用（Component 實例）
 // - h: 是 Vue 的虛擬 DOM 建立函數 (hyperscript)，用於手動渲染元件
-import { createApp, h } from 'vue'
+import { render, createVNode  } from 'vue'
 // 匯入自定義的通知元件 PopoutMessageBox（彈出通知 UI）
 import PopoutMessageBox from '@/components/popoutMessageBox/popoutMessageBox.vue'
 // 匯入 uuid 套件來產生唯一 ID，避免 DOM 元素 ID 衝突，以及提供後續操作的依據
 import { v4 as uuidv4 } from 'uuid'
-
 /* 
   建立或取得通知用的容器（div#popout-message-box-list）
   - 若已有該容器，直接回傳它；
@@ -40,23 +39,17 @@ const createMessage = (
   const tempDiv = document.createElement('div') // 為單一通知建立專屬 DOM 容器
   tempDiv.id = tempID 
   tempDiv.className = 'popout-message-box' // 套用樣式類別，可在 CSS 控制外觀
-  container.appendChild(tempDiv) // The original code used prepend, let's stick to that for consistency. container.prepend(tempDiv)
 
-  container.prepend(tempDiv) // 原本使用 appendChild，但根據先前邏輯使用 prepend：讓新通知出現在最上方
-
-  // 建立並掛載新的 Vue App，內容就是 PopoutMessageBox 元件
-  // - 使用 h() 函數動態渲染元件並傳入必要的 props
-  const app = createApp({
-    render: () =>
-      h(PopoutMessageBox, {
-        eleID: tempID,
-        messageType,
-        mainString,
-        despString: despString || '', // Ensure despString is not undefined
-        lifeTime,
-      }),
+  const vnode = createVNode(PopoutMessageBox, {
+    eleID: tempID,
+    messageType,
+    mainString,
+    despString: despString || '', // Ensure despString is not undefined
+    lifeTime,
   })
-  app.mount(tempDiv) // 將 Vue 元件掛載到剛才建立的 div 上
+  render(vnode, tempDiv)
+  container.appendChild(tempDiv) // The original code used prepend, let's stick to that for consistency. container.prepend(tempDiv)
+  container.prepend(tempDiv) // 原本使用 appendChild，但根據先前邏輯使用 prepend：讓新通知出現在最上方
 }
 
 // 定義 popoutMessage 所提供的方法介面：代表彈出訊息可使用的種類

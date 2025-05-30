@@ -13,13 +13,17 @@ import { popoutMessage, type PopoutMessageMethods } from './popoutMessageService
 // 這樣可以避免 key 重複問題，也能提供更安全的型別提示
 export const PopoutMessageInjectionKey: InjectionKey<PopoutMessageMethods> = Symbol('PopoutMessage')
 
+import { Pinia } from 'pinia'
+import { usePopoutMessageStores } from './stores/popoutMessageStores'
+
 // 匯出一個 Vue 插件（Plugin object）
 // 使用者可以在 main.ts 中透過 app.use(...) 註冊這個插件
 // 當插件被註冊時，它會將 popoutMessage 提供（provide）給整個 Vue 應用
 export default {
-  install: (app: App) => {
+  install: (app: App, options: { pinia: Pinia }) => {
     // 利用 provide 機制，將 popoutMessage 實例與 key 綁在一起
     app.provide(PopoutMessageInjectionKey, popoutMessage)
+    const popoutMessageStores = usePopoutMessageStores()
     // 這樣在應用中其他地方，只要知道這個 key，就可以 inject 使用 popoutMessage
   },
 }
