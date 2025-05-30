@@ -1,9 +1,8 @@
 <script setup lang="ts">
-  import { useStore } from 'vuex'
-  import type { State } from '@/store'
-  const store = useStore<State>()
+  import { useCounterStore } from '@/stores/counter'
+  const counterStore = useCounterStore()
   import { useCounter } from './HomePage'
-  const { count, add, logMsg } = useCounter()
+  const { logMsg } = useCounter()
   import { usePopoutMessage } from '@/components/popoutMessageBox/PopoutMessagePlugin'
   const $notify = usePopoutMessage()
 </script>
@@ -13,8 +12,8 @@
     <div class="row">
       <div class="col">
         <div class="input-group mb-3">
-          <input type="number" class="form-control" v-model="store.state.count">
-          <button class="btn btn-primary" type="button" @click="add">+1</button>
+          <input type="number" class="form-control" v-model="counterStore.count">
+          <button class="btn btn-primary" type="button" @click="counterStore.increment()">+1</button>
         </div>
       </div>
     </div>
