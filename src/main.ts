@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import App from '@/App.vue'
 import router from '@/router/index'
 import PopoutMessagePlugin from '@/components/popoutMessageBox/PopoutMessagePlugin' // Added
+import WebSocketManagerPlugin from '@/components/WebSocketManager/WebSocketManagerPlugin';
 import { createPinia } from 'pinia'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
@@ -14,4 +15,4 @@ import '@/index.css'
 // import field from './test.json'
 // console.log(field)
 
-createApp(App).use(createPinia()).use(router).use(PopoutMessagePlugin).mount('#app')
+createApp(App).use(createPinia()).use(router).use(PopoutMessagePlugin).use(WebSocketManagerPlugin).mount('#app')
