@@ -1,9 +1,9 @@
 <template>
   <transition name="when-create">
     <div
+      v-if="create"
       class="card"
       :class="messageType"
-      v-if="create"
       @mouseenter="stopDel"
       @mouseleave="resumeDel"
       @click="delThisWindow"
@@ -22,46 +22,57 @@
     </div>
   </transition>
 </template>
-  
+
 <script lang="ts">
 import { defineComponent } from 'vue'
 
 export default defineComponent({
-  name: 'popoutMessageBox',
+  name: 'PopoutMessageBox',
   props: {
     messageType: {
       type: String as () => string,
-      required: true
+      required: true,
     },
     eleID: {
       type: String as () => string,
-      required: true
+      required: true,
     },
     lifeTime: {
       type: Number as () => number,
-      default: 5
+      default: 5,
     },
     mainString: {
       type: String as () => string,
-      required: true
+      required: true,
     },
     despString: {
       type: String as () => string,
-      default: ''
-    }
+      default: '',
+    },
   },
   data() {
     return {
       create: false,
       delItem: null as number | null,
       startTime: -1,
-      remaining: -1
+      remaining: -1,
     }
   },
   computed: {
     isAnimeStop(): boolean {
       return this.delItem === null
-    }
+    },
+  },
+  mounted() {
+    this.create = true
+    setTimeout(() => {
+      this.getEleHeight()
+    }, 100)
+    this.remaining = this.lifeTime * 1000
+    this.startTime = Date.now()
+    this.delItem = window.setTimeout(() => {
+      this.delThisWindow()
+    }, this.remaining)
   },
   methods: {
     getEleHeight(): number {
@@ -92,22 +103,10 @@ export default defineComponent({
       this.delItem = window.setTimeout(() => {
         this.delThisWindow()
       }, this.remaining)
-    }
+    },
   },
-  mounted() {
-    this.create = true
-    setTimeout(() => {
-      this.getEleHeight()
-    }, 100)
-    this.remaining = this.lifeTime * 1000
-    this.startTime = Date.now()
-    this.delItem = window.setTimeout(() => {
-      this.delThisWindow()
-    }, this.remaining)
-  }
 })
 </script>
-
 
 <style lang="postcss">
 #popout-message-box-list {
@@ -115,9 +114,9 @@ export default defineComponent({
   top: 3rem;
   right: 0;
   z-index: 99999;
-  margin: .5rem;
+  margin: 0.5rem;
   max-width: 400px;
-  max-height: calc( 100vh - 3rem - 8px );
+  max-height: calc(100vh - 3rem - 8px);
   overflow-x: hidden;
   overflow-y: auto;
   &::-webkit-scrollbar {
@@ -127,8 +126,8 @@ export default defineComponent({
     min-width: 10rem;
     max-width: 25vw;
     cursor: pointer;
-    opacity: .3;
-    transition: all .7s;
+    opacity: 0.3;
+    transition: all 0.7s;
     &:first-child {
       opacity: 1;
     }
@@ -137,12 +136,12 @@ export default defineComponent({
     }
     & .card {
       max-height: 100vh;
-      box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, .1);
+      box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.1);
       border: 0;
       border-style: solid;
       border-width: 0px;
       border-left-width: 5px;
-      transition: all .5s;
+      transition: all 0.5s;
       &.success {
         border-color: var(--bs-green);
       }
@@ -163,18 +162,17 @@ export default defineComponent({
       }
       margin-bottom: 8px;
 
-
       & .card-body {
         & .card-title {
           font-size: 1rem;
           font-weight: bold;
-          letter-spacing: .0125em;
+          letter-spacing: 0.0125em;
           border: 0;
-          margin:0;   
+          margin: 0;
         }
         & .card-desp {
-          font-size: .8rem;
-          letter-spacing: .0125em;
+          font-size: 0.8rem;
+          letter-spacing: 0.0125em;
           border: 0;
           color: var(--bs-gray-500);
         }
@@ -182,21 +180,22 @@ export default defineComponent({
     }
   }
 
-  .when-create-leave-active, .when-create-enter-active {
-    transition: all .5s ease;
+  .when-create-leave-active,
+  .when-create-enter-active {
+    transition: all 0.5s ease;
     transform: translateX(0%) translateY(0px);
     margin-bottom: 8px;
   }
-  
+
   .when-create-enter-from {
-    background-color: rgba(0,0,0,0);
+    background-color: rgba(0, 0, 0, 0);
     transform: translateX(120%) translateY(0px);
     height: 0px;
     margin-bottom: 0px;
   }
-  
+
   .when-create-leave-to {
-    background-color: rgba(0,0,0,0);
+    background-color: rgba(0, 0, 0, 0);
     transform: translateX(114%) translateY(-4px);
     height: 0px;
     margin-bottom: 0px;
@@ -204,16 +203,15 @@ export default defineComponent({
 
   .time-mask {
     position: absolute;
-    left:0;
-    top:0;
+    left: 0;
+    top: 0;
     bottom: 0;
     right: 100%;
-    background-color: rgba(0,0,0,.1);
+    background-color: rgba(0, 0, 0, 0.1);
     &.stop {
       animation-play-state: paused !important;
     }
   }
-
 }
 
 @keyframes time_mask_anime {
