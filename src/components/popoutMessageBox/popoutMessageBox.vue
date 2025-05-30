@@ -25,6 +25,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { usePopoutMessageStores } from './stores/popoutMessageStores'
 
 export default defineComponent({
   name: 'PopoutMessageBox',
@@ -56,6 +57,7 @@ export default defineComponent({
       delItem: null as number | null,
       startTime: -1,
       remaining: -1,
+      popoutMessageStores: null as ReturnType<typeof usePopoutMessageStores> | null,
     }
   },
   computed: {
@@ -87,6 +89,9 @@ export default defineComponent({
       if (!thisEle || !thisEle.children[0]) return
       ;(thisEle.children[0] as HTMLElement).style.height = '0px'
       this.create = false
+      if (this.popoutMessageStores) {
+        this.popoutMessageStores.count -= 1
+      }
       setTimeout(() => {
         thisEle.remove()
       }, 2000)
@@ -105,7 +110,22 @@ export default defineComponent({
       }, this.remaining)
     },
   },
+  created() {
+    // ✅ 將 store 設定到 this
+    this.popoutMessageStores = usePopoutMessageStores()
+    if (this.popoutMessageStores) {
+      this.popoutMessageStores.count += 1
+    }
+  },
+  deactivated() {
+    if (this.popoutMessageStores) {
+      this.popoutMessageStores.count -= 1
+    }
+  },
 })
+
+
+
 </script>
 
 <style lang="postcss">

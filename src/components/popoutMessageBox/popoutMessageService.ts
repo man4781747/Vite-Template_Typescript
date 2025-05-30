@@ -11,6 +11,9 @@ import { v4 as uuidv4 } from 'uuid'
   - 若已有該容器，直接回傳它；
   - 若尚未建立，則建立新的 div 加入至 <body>
 */
+import { getPopoutRootApp } from './PopoutMessagePlugin'
+
+
 function createMessageBoxContainer(): HTMLElement {
   let container = document.getElementById('popout-message-box-list')
   if (!container) {
@@ -47,6 +50,8 @@ const createMessage = (
     despString: despString || '', // Ensure despString is not undefined
     lifeTime,
   })
+  // const app = getPopoutRootApp()
+  vnode.appContext = getPopoutRootApp()._context
   render(vnode, tempDiv)
   container.appendChild(tempDiv) // The original code used prepend, let's stick to that for consistency. container.prepend(tempDiv)
   container.prepend(tempDiv) // 原本使用 appendChild，但根據先前邏輯使用 prepend：讓新通知出現在最上方

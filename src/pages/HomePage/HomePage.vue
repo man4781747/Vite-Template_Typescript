@@ -5,6 +5,9 @@
   const { logMsg } = useCounter()
   import { usePopoutMessage } from '@/components/popoutMessageBox/PopoutMessagePlugin'
   const $notify = usePopoutMessage()
+
+  import { usePopoutMessageStores } from '@/components/popoutMessageBox/stores/popoutMessageStores'
+  const popoutMessageStores = usePopoutMessageStores()
 </script>
 
 <template>
@@ -17,6 +20,7 @@
         </div>
       </div>
     </div>
+    {{ popoutMessageStores.count }}
     <div class="row">
       <div class="col">
         <div class="input-group mb-3">

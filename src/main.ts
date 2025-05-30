@@ -14,4 +14,4 @@ import '@/index.css'
 // import field from './test.json'
 // console.log(field)
 const pinia = createPinia()
-createApp(App).use(pinia).use(router).use(PopoutMessagePlugin,{pinia}).mount('#app')
+createApp(App).use(pinia).use(router).use(PopoutMessagePlugin).mount('#app')
