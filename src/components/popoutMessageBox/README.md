@@ -9,7 +9,7 @@
 components/
 ├── popoutMessageBox.vue # 單一訊息顯示元件（動畫、內容、計時控制）
 ├── popoutMessageService.ts # 訊息建立邏輯與外部調用接口
-└── PopoutNotifyPlugin.ts # Vue 插件，提供 inject 用的全域通知服務
+└── PopoutMessagePlugin.ts # Vue 插件，提供 inject 用的全域通知服務
 ```
 
 ---
@@ -21,21 +21,23 @@ components/
 ```ts
 import { createApp } from 'vue'
 import App from './App.vue'
-import PopoutNotifyPlugin from '@/components/popoutMessageBox/PopoutNotifyPlugin'
+import PopoutMessagePlugin from '@/components/popoutMessageBox/PopoutMessagePlugin'
 
 const app = createApp(App)
-app.use(PopoutNotifyPlugin)
+app.use(pinia)
+app.use(PopoutMessagePlugin) // 記得要在 pinia 後面 use
 app.mount('#app')
 ```
 
 ### 2️⃣ 在組件中使用通知功能
 範例1
 ```ts
-import { usePopoutNotify } from '@/components/popoutMessageBox/PopoutNotifyPlugin'
+----- xxx.ts ----
+import { usePopoutMessage } from '@/components/popoutMessageBox/PopoutMessagePlugin'
 
 export default {
   setup() {
-    const notify = usePopoutNotify()
+    const notify = usePopoutMessage()
     notify.success('儲存成功', '資料已更新')
     notify.error('儲存失敗', '請稍後再試', 10)
   }
@@ -43,10 +45,11 @@ export default {
 ```
 範例2
 ```ts
+----- xxx.vue ----
 <script setup lang="ts">
   const { count, add, logMsg } = useCounter()
-  import { usePopoutNotify } from '@/components/popoutMessageBox/PopoutMessagePlugin'
-  const $notify = usePopoutNotify()
+  import { usePopoutMessage } from '@/components/popoutMessageBox/PopoutMessagePlugin'
+  const $notify = usePopoutMessage()
 </script>
 
 <template>
