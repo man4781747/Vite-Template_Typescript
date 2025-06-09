@@ -6,6 +6,10 @@
   import { usePopoutMessage } from '@/components/popoutMessageBox/PopoutMessagePlugin'
   const $notify = usePopoutMessage()
 
+  import { useWebsocketManager } from '@/components/websocketManager/websocketManagerPlugin'
+  const $ws_manager = useWebsocketManager()
+
+
   import { usePopoutMessageStores } from '@/components/popoutMessageBox/stores/popoutMessageStores'
   const popoutMessageStores = usePopoutMessageStores()
 </script>
@@ -31,6 +35,13 @@
           <button class="btn btn-warning" @click="$notify.warning(logMsg, 'Waring訊息', 10)">Warning訊息</button>
           <button class="btn btn-secondary" @click="$notify.debug(logMsg, 'Debug訊息', 10)">Debug訊息</button>
           <button class="btn btn-primary" @click="$notify.primary(logMsg, 'Primary訊息', 10)">Primary訊息</button>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <div class="input-group mb-3">
+          <button class="btn btn-primary" type="button" @click="$ws_manager.openWindow()">Open</button>
         </div>
       </div>
     </div>
