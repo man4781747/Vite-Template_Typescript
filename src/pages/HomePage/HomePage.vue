@@ -44,6 +44,9 @@
           <button class="btn btn-primary" type="button" @click="$ws_manager.openWindow()">Open</button>
         </div>
       </div>
+      <div class="col">
+        <button class="btn btn-primary" type="button" @click="$ws_manager.setWebsocketUrl('ws://192.168.20.18/ws')">Test</button>
+      </div>
     </div>
   </div>
 </template>
