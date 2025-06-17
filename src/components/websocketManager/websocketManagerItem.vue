@@ -2,75 +2,38 @@
   <div id="akira-c-websocket-manager-card" class="websocket-manager-card">
     <div class="websocket-manager-header">
       <h3>WebSocket 管理器</h3>
-      <button class="close-btn" @click="closeWindow">×</button>
+      <button class="close-btn" @click="websocketManager.closeWindow">×</button>
     </div>
     <div class="websocket-manager-content">
       <div class="url-section">
         <label>WebSocket URL:</label>
         <input 
           type="text" 
-          v-model="websocketState.websocketUrl.value" 
-          @change="updateWebsocketUrl"
+          v-model="websocketManager.state.websocketUrl.value"
           placeholder="ws://localhost:8080/ws"
+          :disabled="websocketManager.state.isConnected.value"
         />
       </div>
       <div class="status-section">
         <div class="status-item">
           <span>連接狀態：</span>
-          <span :class="['status-badge', websocketState.connectionStatus.value]">{{ websocketState.connectionStatusText.value }}</span>
+          <span :class="['status-badge', websocketManager.state.connectionStatus.value]">{{ websocketManager.state.connectionStatusText.value }}</span>
         </div>
         <div class="status-item">
           <span>最後更新：</span>
-          <span>{{ websocketState.lastUpdateTime.value }}</span>
+          <span>{{ websocketManager.state.lastUpdateTime.value }}</span>
         </div>
       </div>
       <div class="control-section">
-        <button 
-          class="connect-btn" 
-          @click="toggleConnection"
-          :class="{ 'disconnect': websocketState.isConnected.value }"
-        >
-          {{ websocketState.isConnected.value ? '斷開連接' : '建立連接' }}
-        </button>
+        <button v-if="!websocketManager.state.isConnected.value" class="connect-btn" @click="websocketManager.connectWebsocket">建立連接</button>
+        <button v-else class="connect-btn disconnect" @click="websocketManager.disconnectWebsocket">斷開連接</button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { websocketState, websocketManager } from './websocketManagerService'
-
-// 更新 WebSocket URL
-const updateWebsocketUrl = () => {
-  websocketManager.setWebsocketUrl(websocketState.websocketUrl.value)
-}
-
-// 切換連接狀態
-const toggleConnection = () => {
-  if (websocketState.isConnected.value) {
-    // 斷開連接
-    if (websocketState.socket.value) {
-      websocketState.socket.value.close()
-      websocketManager.setSocket(null)
-    }
-  } else {
-    // 建立新連接
-    try {
-      const newSocket = new WebSocket(websocketState.websocketUrl.value)
-      websocketManager.setSocket(newSocket)
-    } catch (error) {
-      console.error('WebSocket 連接失敗:', error)
-    }
-  }
-}
-
-// 關閉視窗
-const closeWindow = () => {
-  const card = document.getElementById('akira-c-websocket-manager-card')
-  if (card) {
-    card.classList.add('not-show')
-  }
-}
+import { websocketManager } from './websocketManagerService'
 </script>
 
 <style scoped>

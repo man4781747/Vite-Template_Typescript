@@ -35,27 +35,10 @@ export default {
   },
 }
 
-/**
- * 自定義一個 Composition API Hook，名稱為 usePopoutMessage
- * 這個函數讓我們能在 setup() 中簡單地使用 websocketManager 的功能
- * 
- * 例如: 在 main.ts 中
- * 
- * import { usePopoutMessage } from '@/components/popoutMessageBox/PopoutMessagePlugin'
- * 
- * const $notify = usePopoutMessage()
- * 
- * 這樣就能使用 $notify 來操作了
- * 
- * @returns 
- */
 export function useWebsocketManager(): WebsocketManagerMethods {
-  // 使用 inject() 取出剛才提供（provide）的 popoutMessage 實例
-  const notify = inject(WebsocketManagerInjectionKey)
-  // 如果沒取到（通常是插件未被註冊），則拋出錯誤提醒開發者
-  if (!notify) {
+  const ws_manager = inject(WebsocketManagerInjectionKey)
+  if (!ws_manager) {
     throw new Error('PopoutMessage service not provided via PopoutMessagePlugin.')
   }
-  // 成功取得時，回傳 notify 實例，讓使用者可以直接調用其方法
-  return notify
+  return ws_manager
 }

@@ -2,18 +2,11 @@
 // - createApp: 用來動態建立一個新的 Vue 應用（Component 實例）
 // - h: 是 Vue 的虛擬 DOM 建立函數 (hyperscript)，用於手動渲染元件
 import { render, createVNode  } from 'vue'
-// 匯入自定義的通知元件 PopoutMessageBox（彈出通知 UI）
+// 匯入自定義的元件 websocketManagerItem
 import websocketManagerItem from '@/components/websocketManager/websocketManagerItem.vue'
-// 匯入 uuid 套件來產生唯一 ID，避免 DOM 元素 ID 衝突，以及提供後續操作的依據
-import { v4 as uuidv4 } from 'uuid'
-/* 
-  建立或取得通知用的容器（div#popout-message-box-list）
-  - 若已有該容器，直接回傳它；
-  - 若尚未建立，則建立新的 div 加入至 <body>
-*/
+// 匯入 websocketManagerPlugin
 import { getWebsocketManagerRootApp } from './websocketManagerPlugin'
-import { Socket } from 'dgram'
-import { ref, computed } from 'vue'
+import { ref, watch } from 'vue'
 
 // 響應式狀態
 
@@ -42,6 +35,25 @@ const connectionStatusText = ref('未連接')
  */
 const lastUpdateTime = ref('尚未連接')
 
+const connectWebsocket = () => {
+  disconnectWebsocket()
+  try {
+    const newSocket = new WebSocket(websocketUrl.value)
+    setSocket(newSocket)
+  } catch (error) {
+    console.error('WebSocket 連接失敗:', error)
+  }
+}
+
+const disconnectWebsocket = () => {
+  if (isConnected.value) {
+    if (socket.value) {
+      socket.value.close()
+      setSocket(null)
+    }
+  }
+}
+
 // 更新最後更新時間
 const updateLastUpdateTime = () => {
   const now = new Date()
@@ -54,30 +66,41 @@ const setupSocketListeners = (socket: WebSocket) => {
     isConnected.value = true
     connectionStatus.value = 'connected'
     connectionStatusText.value = '已連接'
-    updateLastUpdateTime()
+    console.log("socket 連線成功，若要進一步使用websocket功能，請設計 socket.onmessage 設定")
   }
 
   socket.onclose = () => {
     isConnected.value = false
     connectionStatus.value = 'disconnected'
     connectionStatusText.value = '已斷開'
-    updateLastUpdateTime()
+    console.log("socket 斷開連線")
   }
 
   socket.onerror = () => {
     connectionStatus.value = 'error'
     connectionStatusText.value = '連接錯誤'
-    updateLastUpdateTime()
+    console.log("socket 連接錯誤")
   }
 }
 
-const setWebsocketUrl = (url: string) => {
-  websocketUrl.value = url
-}
+// 監聽 socket 變化
+watch(socket, (newSocket, oldSocket) => {
+  console.log('Socket 狀態變化:', {
+    old: oldSocket,
+    new: newSocket,
+    url: websocketUrl.value
+  })
+  updateLastUpdateTime()
 
-const getSocket = () => {
-  return socket.value
-}
+  if (!newSocket) {
+    // 當 socket 被設為 null 時，重置狀態
+    isConnected.value = false
+    connectionStatus.value = 'disconnected'
+    connectionStatusText.value = '已斷開'
+  } else {
+    setupSocketListeners(newSocket)
+  }
+}, { immediate: true, deep: true })
 
 /**
  * 設置 socket 
@@ -89,16 +112,11 @@ const getSocket = () => {
 const setSocket = (newSocket: WebSocket | null) => {
   console.log("setSocket", newSocket)
   socket.value = newSocket
-  if (newSocket) {
-    setupSocketListeners(newSocket)
-  } else {
-    isConnected.value = false
-    connectionStatus.value = 'disconnected'
-    connectionStatusText.value = '已斷開'
-    updateLastUpdateTime()
-  }
 }
 
+/**
+ * 開啟 websocket 管理器視窗
+ */
 const openWindow = () => {
   let container = document.getElementById('akira-c-websocket-manager-container')
   if (!container) {
@@ -116,14 +134,17 @@ const openWindow = () => {
   }
 }
 
-export interface WebsocketManagerMethods {
-  openWindow: () => void,
-  getSocket:() => WebSocket | null,
-  setWebsocketUrl: (url: string) => void,
-  setSocket: (socket: WebSocket | null) => void,
+/**
+ * 關閉 websocket 管理器視窗
+ */
+const closeWindow = () => {
+  const card = document.getElementById('akira-c-websocket-manager-card')
+  if (card) {
+    card.classList.add('not-show')
+  }
 }
 
-// 導出響應式狀態
+// 導出響應式狀態 
 export const websocketState = {
   socket,
   websocketUrl,
@@ -133,9 +154,44 @@ export const websocketState = {
   lastUpdateTime
 }
 
+/**
+ * 定義 websocket 管理器的方法
+ * 
+ * @interface WebsocketManagerMethods
+ * @property {() => void} openWindow 開啟 websocket 管理器視窗
+ * @property {Object} state WebSocket 狀態對象
+ * @property {Ref<WebSocket | null>} state.socket WebSocket 實體
+ * @property {Ref<string>} state.websocketUrl WebSocket URL
+ * @property {Ref<boolean>} state.isConnected 連接狀態
+ * @property {Ref<string>} state.connectionStatus 連接狀態代碼
+ * @property {Ref<string>} state.connectionStatusText 連接狀態文字
+ * @property {Ref<string>} state.lastUpdateTime 最後更新時間
+ */
+export interface WebsocketManagerMethods {
+  openWindow: () => void,
+  closeWindow: () => void,
+  connectWebsocket: () => void,
+  disconnectWebsocket: () => void,
+  state: {
+    socket: typeof socket,
+    websocketUrl: typeof websocketUrl,
+    isConnected: typeof isConnected,
+    connectionStatus: typeof connectionStatus,
+    connectionStatusText: typeof connectionStatusText,
+    lastUpdateTime: typeof lastUpdateTime
+  }
+}
+
+
+/**
+ * 導出 websocket 管理器
+ * 
+ * @type {WebsocketManagerMethods}
+ */
 export const websocketManager: WebsocketManagerMethods = {
   openWindow: () => openWindow(),
-  getSocket: () => getSocket(),
-  setWebsocketUrl: (url: string) => setWebsocketUrl(url),
-  setSocket: (socket: WebSocket | null) => setSocket(socket),
+  closeWindow: () => closeWindow(),
+  connectWebsocket: () => connectWebsocket(),
+  disconnectWebsocket: () => disconnectWebsocket(),
+  state: websocketState
 }

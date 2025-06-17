@@ -9,7 +9,6 @@
   import { useWebsocketManager } from '@/components/websocketManager/websocketManagerPlugin'
   const $ws_manager = useWebsocketManager()
 
-
   import { usePopoutMessageStores } from '@/components/popoutMessageBox/stores/popoutMessageStores'
   const popoutMessageStores = usePopoutMessageStores()
 </script>
@@ -24,8 +23,8 @@
         </div>
       </div>
     </div>
-    {{ popoutMessageStores.count }}
     <div class="row">
+      <h1>Popout Logs 演示 ({{ popoutMessageStores.count  }})</h1>
       <div class="col">
         <div class="input-group mb-3">
           <input type="text" class="form-control" v-model="logMsg">
@@ -39,13 +38,15 @@
       </div>
     </div>
     <div class="row">
+      <h1>Websocket Manager 演示</h1>
       <div class="col">
         <div class="input-group mb-3">
-          <button class="btn btn-primary" type="button" @click="$ws_manager.openWindow()">Open</button>
+          <span class="input-group-text">Websocket Manager</span>
+          <input type="text" class="form-control" v-model="$ws_manager.state.websocketUrl.value" :disabled="$ws_manager.state.isConnected.value">
+          <button v-if="!$ws_manager.state.isConnected.value" class="btn btn-info" @click="$ws_manager.connectWebsocket">建立連線</button>
+          <button v-else class="btn btn-danger" @click="$ws_manager.disconnectWebsocket">斷開連線</button>
+          <button class="btn btn-primary" type="button" @click="$ws_manager.openWindow()">打開操作視窗</button>
         </div>
-      </div>
-      <div class="col">
-        <button class="btn btn-primary" type="button" @click="$ws_manager.setWebsocketUrl('ws://192.168.20.18/ws')">Test</button>
       </div>
     </div>
   </div>
