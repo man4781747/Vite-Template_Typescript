@@ -13,9 +13,6 @@ import { popoutMessage, type PopoutMessageMethods } from './popoutMessageService
 // 這樣可以避免 key 重複問題，也能提供更安全的型別提示
 export const PopoutMessageInjectionKey: InjectionKey<PopoutMessageMethods> = Symbol('PopoutMessage')
 
-import { Pinia } from 'pinia'
-import { usePopoutMessageStores } from './stores/popoutMessageStores'
-
 let _app: App | null = null
 
 // 提供一個 getter 讓其他模組取得 app

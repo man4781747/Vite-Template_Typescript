@@ -6,6 +6,11 @@ import { render, createVNode  } from 'vue'
 import PopoutMessageBox from '@/components/popoutMessageBox/popoutMessageBox.vue'
 // 匯入 uuid 套件來產生唯一 ID，避免 DOM 元素 ID 衝突，以及提供後續操作的依據
 import { v4 as uuidv4 } from 'uuid'
+
+import { ref } from 'vue'
+
+const count = ref(0)
+
 /* 
   建立或取得通知用的容器（div#popout-message-box-list）
   - 若已有該容器，直接回傳它；
@@ -57,6 +62,11 @@ const createMessage = (
   container.prepend(tempDiv) // 原本使用 appendChild，但根據先前邏輯使用 prepend：讓新通知出現在最上方
 }
 
+// 導出響應式狀態 
+export const status = {
+  count
+}
+
 // 定義 popoutMessage 所提供的方法介面：代表彈出訊息可使用的種類
 // - mainString: 標題文字或主要訊息
 // - despString: 補充說明（可選）
@@ -68,6 +78,9 @@ export interface PopoutMessageMethods {
   warning: (mainString: string, despString?: string, lifeTime?: number) => void
   debug: (mainString: string, despString?: string, lifeTime?: number) => void
   primary: (mainString: string, despString?: string, lifeTime?: number) => void
+  status: {
+    count: typeof count,
+  }
 }
 
 /*
@@ -88,4 +101,5 @@ export const popoutMessage: PopoutMessageMethods = {
     createMessage('debug', mainString, despString, lifeTime),
   primary: (mainString, despString, lifeTime) =>
     createMessage('primary', mainString, despString, lifeTime),
+  status: status,
 }

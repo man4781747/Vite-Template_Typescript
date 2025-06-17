@@ -9,8 +9,6 @@
   import { useWebsocketManager } from '@/components/websocketManager/websocketManagerPlugin'
   const $ws_manager = useWebsocketManager()
 
-  import { usePopoutMessageStores } from '@/components/popoutMessageBox/stores/popoutMessageStores'
-  const popoutMessageStores = usePopoutMessageStores()
 </script>
 
 <template>
@@ -24,7 +22,7 @@
       </div>
     </div>
     <div class="row">
-      <h1>Popout Logs 演示 ({{ popoutMessageStores.count  }})</h1>
+      <h1>Popout Logs 演示 ({{ $notify.status.count  }})</h1>
       <div class="col">
         <div class="input-group mb-3">
           <input type="text" class="form-control" v-model="logMsg">
