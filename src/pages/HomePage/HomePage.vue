@@ -3,11 +3,23 @@
   const counterStore = useCounterStore()
   import { useCounter } from './HomePage'
   const { logMsg } = useCounter()
-  import { usePopoutMessage } from '@/components/popoutMessageBox/PopoutMessagePlugin'
+  import { usePopoutMessage } from 'akira-c-popout-message-box'
   const $notify = usePopoutMessage()
-
   import { useWebsocketManager } from '@/components/websocketManager/websocketManagerPlugin'
   const $ws_manager = useWebsocketManager()
+
+  import {ref} from 'vue'
+
+  const isLoading = ref(false)
+  const isCardVisible = ref(false)
+  function performAction() {
+    isLoading.value = true
+    setTimeout(() => {
+      isLoading.value = false
+    }, 1000)
+  }
+
+
 
 </script>
 
@@ -48,7 +60,22 @@
       </div>
     </div>
   </div>
+  <PopoutCard v-if="isCardVisible" @closeWindow="isCardVisible = false" :loadingWindow="isLoading">
+    <div class="card-header">My Card Title</div>
+    <div class="card-body">
+      <p>This is the content of the card.</p>
+    </div>
+    <div class="card-footer">
+      <button @click="performAction" class="btn btn-info">Do Something</button>
+    </div>
+  </PopoutCard>
+  <button @click="isCardVisible = true" class="btn btn-info">Open Card</button>
+
+
 </template>
+
+<script lang="ts">
+</script>
 
 <style lang="postcss">
 /* https://github.com/csstools/postcss-plugins/tree/main/plugins/postcss-nesting */
