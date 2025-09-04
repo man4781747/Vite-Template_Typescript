@@ -1,80 +1,12 @@
 <script setup lang="ts">
-  import { useCounterStore } from '@/stores/counter'
-  const counterStore = useCounterStore()
-  import { useCounter } from './HomePage'
-  const { logMsg } = useCounter()
-  import { usePopoutMessage } from 'akira-c-popout-message-box'
-  const $notify = usePopoutMessage()
-  import { useWebsocketManager } from '@/components/websocketManager/websocketManagerPlugin'
-  const $ws_manager = useWebsocketManager()
-
-  import {ref} from 'vue'
-
-  const isLoading = ref(false)
-  const isCardVisible = ref(false)
-  function performAction() {
-    isLoading.value = true
-    setTimeout(() => {
-      isLoading.value = false
-    }, 1000)
-  }
-
-
 
 </script>
 
 <template>
-  <div class="container">
-    <div class="row">
-      <div class="col">
-        <div class="input-group mb-3">
-          <input type="number" class="form-control" v-model="counterStore.count">
-          <button class="btn btn-primary" type="button" @click="counterStore.increment()">+1</button>
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <h1>Popout Logs 演示 ({{ $notify.status.count  }})</h1>
-      <div class="col">
-        <div class="input-group mb-3">
-          <input type="text" class="form-control" v-model="logMsg">
-          <button class="btn btn-success" @click="$notify.success(logMsg, 'Success訊息', 10)">Success訊息</button>
-          <button class="btn btn-danger" @click="$notify.error(logMsg, 'Error訊息', 10)">Error/Fail訊息</button>
-          <button class="btn btn-info" @click="$notify.info(logMsg, 'Info訊息', 10)">Info訊息</button>
-          <button class="btn btn-warning" @click="$notify.warning(logMsg, 'Waring訊息', 10)">Warning訊息</button>
-          <button class="btn btn-secondary" @click="$notify.debug(logMsg, 'Debug訊息', 10)">Debug訊息</button>
-          <button class="btn btn-primary" @click="$notify.primary(logMsg, 'Primary訊息', 10)">Primary訊息</button>
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <h1>Websocket Manager 演示</h1>
-      <div class="col">
-        <div class="input-group mb-3">
-          <span class="input-group-text">Websocket Manager</span>
-          <input type="text" class="form-control" v-model="$ws_manager.state.websocketUrl.value" :disabled="$ws_manager.state.isConnected.value">
-          <button v-if="!$ws_manager.state.isConnected.value" class="btn btn-info" @click="$ws_manager.connectWebsocket">建立連線</button>
-          <button v-else class="btn btn-danger" @click="$ws_manager.disconnectWebsocket">斷開連線</button>
-          <button class="btn btn-primary" type="button" @click="$ws_manager.openWindow()">打開操作視窗</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <PopoutCard v-if="isCardVisible" @closeWindow="isCardVisible = false" :loadingWindow="isLoading">
-    <div class="card-header">My Card Title</div>
-    <div class="card-body">
-      <p>This is the content of the card.</p>
-    </div>
-    <div class="card-footer">
-      <button @click="performAction" class="btn btn-info">Do Something</button>
-    </div>
-  </PopoutCard>
-  <button @click="isCardVisible = true" class="btn btn-info">Open Card</button>
-
-
 </template>
 
 <script lang="ts">
+
 </script>
 
 <style lang="postcss">
