@@ -40,8 +40,20 @@ export default defineConfig({
       '@': path.resolve(__dirname, 'src'),
     },
   },
-  // root: 'src',
-  // server: {
-  //   open: MainHtmlPath
-  // }
+  server: {
+    proxy: {
+      // '/api/playlist/': {
+      //   target: 'http://dev.aecosign.ios',
+      //   changeOrigin: true,
+      //   // rewrite: (path) => path.replace(/^\/api/, ''),
+      // },
+      '/api': {
+        target: 'http://dev.aecosign.io',
+        changeOrigin: true,
+        // rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+    },
+    cors:true,
+    host:'127.0.0.1'
+  }
 })

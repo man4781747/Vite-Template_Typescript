@@ -12,6 +12,10 @@ import '@/index.css'
 
 import PopoutMessagePlugin from 'akira-c-popout-message-box'
 import { install as PopoutCard } from 'akira-c-popout-card'
+import 'akira-c-popout-card/lib/popout-card.css'
+
+import * as d3 from 'd3';
+window.d3 = d3
 
 // https://cn.vitejs.dev/guide/features.html#glob-import
 // 這樣做可以import json格式檔案
