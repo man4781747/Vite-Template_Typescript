@@ -20,7 +20,7 @@ const is_imageDataEdited = computed(() => {
 
 
 function updateImageDetail() {
-  fetch(`${loginInfoStore.mainURL}/images/${ImageID.value}/`, {
+  fetch(`${loginInfoStore.mainURL}/images/${ImageID.value}/?include_delete`, {
     headers: loginInfoStore.header,
   })
   .then(function (response) {
@@ -46,6 +46,19 @@ function deleteThisImage() {
   })
 }
 
+function deleteThisImageAndFiles() {
+  fetch(`${loginInfoStore.mainURL}/images/${ImageID.value}/?include_files`, {
+    headers: loginInfoStore.header,
+    method: "DELETE"
+  })
+  .then(function (response) {
+    return response.json();
+  })
+  .then(D_data => {
+    updateImageDetail()
+  })
+}
+
 function patchImageDetail() {
   var patchData = {
     name: imageData_temp.value.name,
@@ -53,7 +66,11 @@ function patchImageDetail() {
     valid_until: imageData_temp.value.valid_until,
     allowed_device_model: imageData_temp.value.allowed_device_model,
   }
-  fetch(`${loginInfoStore.mainURL}/images/${ImageID.value}/`, {
+  var url = `${loginInfoStore.mainURL}/images/${ImageID.value}/`
+  if (imageData_temp.value.is_delete === true) {{
+    url = url +"?include_delete"
+  }}
+  fetch(url, {
     headers: loginInfoStore.header,
     method: "PATCH",
     body: JSON.stringify(patchData)
@@ -80,7 +97,8 @@ function patchImageDetail() {
             <div class="btn btn-info" @click="updateImageDetail">🗘</div>
           </div>
           <div class="btn-group me-2">
-            <div class="btn btn-danger" @click="deleteThisImage">刪除</div>
+            <div class="btn btn-danger" v-if="!imageData_temp.is_delete" @click="deleteThisImage">刪除</div>
+            <div class="btn btn-danger" v-else @click="deleteThisImageAndFiles">刪除檔案</div>
           </div>
         </div>
       </div>
@@ -121,8 +139,8 @@ function patchImageDetail() {
             <div class="input-group">
               <span class="input-group-text">被誰引用</span>
               <div class="form-control">
-                <template v-for="playlist_id in imageData_temp.linked_playlist">
-                  <router-link class="btn badge bg-primary" :to="`/Playlist/${playlist_id}`">{{ playlist_id }}</router-link>
+                <template v-for="playlist_info,playlist_id in imageData_temp.linked_playlist">
+                  <router-link class="btn badge bg-primary" :to="`/Playlist/${playlist_id}`">{{ playlist_info.name }}</router-link>
                   <!-- <router-link class="btn badge bg-primary" :to="`/Playlist/${playlist_id}`">{{ loginInfoStore.playlist_dict[playlist_id].name }}</router-link> -->
                 </template>
               </div>

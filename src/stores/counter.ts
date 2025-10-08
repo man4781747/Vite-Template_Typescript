@@ -11,6 +11,7 @@ export const useLoginInfoStore = defineStore('loginInfo', {
     // mainURL : "http://127.0.0.1:8000",
     mainURL : "/api",
     auth : {"username": "admin","password": "84149738"},
+    // auth : {"username": "akira","password": "84149738"},
     accessToken: "",
     refreshToken: "",
     loginSuccess: false,
@@ -108,15 +109,26 @@ export const useLoginInfoStore = defineStore('loginInfo', {
 
 
     updateImagelist() {
-      fetch(`${this.mainURL}/images/?site=${this.chosedSite}`, {
-        headers: this.header,
-      })
-      .then(function (response) {
-        return response.json();
-      })
-      .then(D_data => {
-        this.image_list = D_data["results"]
-      })
+      function do_url (url, state) {
+        fetch(url, {
+          headers: state.header,
+        })
+        .then(function (response) {
+          return response.json();
+        })
+        .then(D_data => {
+          state.image_list = state.image_list.concat(D_data["results"])
+          state.image_list.sort((a, b) => a.is_delete - b.is_delete);
+          if (D_data["next"] != null) {
+            const url = new URL(D_data["next"])
+            var next_url = `${state.mainURL}${url.pathname}${url.search}`
+            do_url(next_url, state)
+          }
+        })
+      }
+      this.image_list = []
+      var url = `${this.mainURL}/images/?site=${this.chosedSite}&include_delete`
+      do_url(url, this)
     },
 
     deleteImage(imageID) {
@@ -162,15 +174,24 @@ export const useLoginInfoStore = defineStore('loginInfo', {
 
 
     updatePlaylist(chosedSite) {
-      fetch(`${this.mainURL}/playlist/?site=${chosedSite}&detail`, {
-        headers: this.header,
-      })
-      .then(function (response) {
-        return response.json();
-      })
-      .then(D_data => {
-        this.playlist_list = D_data["results"]
-      })
+      async function do_url (url, state) {
+        fetch(url, {
+          headers: state.header,
+        })
+        .then(function (response) {
+          return response.json();
+        })
+        .then(D_data => {
+          state.playlist_list = state.playlist_list.concat(D_data["results"])
+          state.playlist_list.sort((a, b) => a.is_delete - b.is_delete);
+          if (D_data["next"] != null) {
+            do_url(D_data["next"], state)
+          }
+        })
+      }
+      this.playlist_list = []
+      var url = `${this.mainURL}/playlist/?site=${chosedSite}&detail&include_delete`
+      do_url(url, this)
     },
     deletePlaylist(playlistID) {
       return fetch(`${this.mainURL}/playlist/${playlistID}/`, {

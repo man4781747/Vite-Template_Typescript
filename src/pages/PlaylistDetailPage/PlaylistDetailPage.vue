@@ -132,9 +132,9 @@ function addConfig(target) {
           <div class="input-group">
             <span class="input-group-text">被引用</span>
             <div class="form-control">
-              <template v-for="timetable_id in playlist_detail_temp.linked_timetable">
-                <router-link class="btn badge bg-secondary" 
-                  :to="`/Timetable/${timetable_id}`">{{ timetable_id }}</router-link>
+              <template v-for="timetable_info, timetable_id in playlist_detail_temp.linked_timetable">
+                <router-link class="btn badge bg-primary" 
+                  :to="`/Timetable/${timetable_id}`">{{ timetable_info.name }}</router-link>
               </template>
             </div>
           </div>
@@ -143,10 +143,14 @@ function addConfig(target) {
           <div class="input-group">
             <span class="input-group-text">引用圖片</span>
             <div class="form-control">
-              <template v-for="image_id in playlist_detail_temp.linked_image">
-                <router-link class="btn badge bg-primary" :to="`/Image/${image_id}`" v-if="loginInfoStore.image_dict[image_id]">
-                  {{ loginInfoStore.image_dict[image_id].name }}
+              <template v-for="image_info, image_id in playlist_detail_temp.linked_image">
+                <router-link class="btn badge bg-primary" style="margin-right: 2px;" :to="`/Image/${image_id}`" v-if="image_info.name !== null">
+                  {{ image_info.name }}
                 </router-link>
+                <router-link class="btn badge bg-danger" style="text-decoration:line-through;margin-right: 2px;" :to="`/Image/${image_id}`" v-else>
+                  {{ image_id }}
+                </router-link>
+
               </template>
             </div>
           </div>
@@ -155,14 +159,27 @@ function addConfig(target) {
         <div class="col-12">
           <div class="row g-2">
             <div class="col-12" v-for="pic_data, pic_data_index in playlist_detail_temp.image_list">
-              <div class="card" style="border-left: 8px solid gray;">
+              <div class="card" style="border-left: 8px solid gray;" :style="
+                loginInfoStore.image_dict[pic_data.image] === undefined || loginInfoStore.image_dict[pic_data.image].is_delete === true
+                ?'border-color: var(--bs-red);':''">
                 <div class="card-body">
                   <div class="row g-2">
                     <div class="col-8">
                       <div class="input-group">
                         <span class="input-group-text">照片選取</span>
-                        <select class="form-control" v-model="pic_data.image">
-                          <option v-for="image_data of loginInfoStore.image_list" :value="image_data.id">{{ image_data.name }}</option>
+
+                        
+                        <select class="form-control" v-model="pic_data.image" :style="
+                          loginInfoStore.image_dict[pic_data.image] === undefined || loginInfoStore.image_dict[pic_data.image].is_delete === true
+                          ?'color: var(--bs-red);font-weight: bolder;':''">
+                          <template v-for="image_data of loginInfoStore.image_list">
+                            <option v-if="image_data.is_delete===false" :value="image_data.id">{{ image_data.name }}</option>
+                          </template>
+                          <option v-if="
+                            loginInfoStore.image_dict[pic_data.image] === undefined || loginInfoStore.image_dict[pic_data.image].is_delete === true
+                          " :value="pic_data.image" style="color: var(--bs-red);font-weight: bolder;">
+                            unknow image: {{ pic_data.image }}
+                          </option>
                         </select>
 
 

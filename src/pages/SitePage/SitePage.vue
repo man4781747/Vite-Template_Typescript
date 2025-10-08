@@ -71,7 +71,7 @@ const new_image_data = ref({
   "site": loginInfoStore.chosedSite,
   "valid_from": format(addDays(new Date(), -30), 'yyyy-MM-dd'),
   "valid_until": format(addDays(new Date(), 30), 'yyyy-MM-dd'),
-  "allowed_device_model": "[1,2,3,4]"
+  "allowed_device_model": "[1,2,3]"
 })
 function handleImageChange(event) {
   // 獲取使用者選擇的第一個檔案
@@ -278,15 +278,16 @@ function create_new_timetable() {
                 </div>
               </div>
               <hr>
-              <div class="row g-2">
+              <div class="row g-2" style="max-height: 400px;overflow: auto;">
                 <div class="col-12" v-for="image_data in loginInfoStore.image_list">
-                  <!-- {{ image_data }} -->
                   <div class="input-group">
                     <span class="input-group-text">Name</span>
-                    <router-link class="form-control" :to="`/Image/${image_data.id}`">
+                    <router-link class="form-control" :to="`/Image/${image_data.id}`"
+                      :style="image_data.is_delete?'text-decoration:line-through;color:gray;':''"
+                    >
                       {{ `${image_data.name}` }}
                     </router-link>
-                    <button class="btn btn-danger" @click="loginInfoStore.deleteImage(image_data.id)">delete</button>
+                    <button class="btn btn-danger" @click="loginInfoStore.deleteImage(image_data.id)" v-if="image_data.is_delete===false">delete</button>
                   </div>
                 </div>
               </div>
@@ -315,10 +316,14 @@ function create_new_timetable() {
                   <div class="col-12" v-for="playlist in loginInfoStore.playlist_list">
                     <div class="input-group">
                       <span class="input-group-text">Name</span>
-                      <router-link class="form-control" :to="`/Playlist/${playlist.id}`">
+                      <router-link class="form-control" :to="`/Playlist/${playlist.id}`"
+                        :style="playlist.is_delete?'text-decoration:line-through;color:gray;':''"
+                      >
                         {{ `${playlist.name}` }}
                       </router-link>
-                      <button class="btn btn-danger" @click="loginInfoStore.deletePlaylist(playlist.id)">delete</button>
+                      <button class="btn btn-danger" 
+                        v-if="playlist.is_delete === false"
+                      @click="loginInfoStore.deletePlaylist(playlist.id)">delete</button>
                     </div>
                   </div>
                 </div>
